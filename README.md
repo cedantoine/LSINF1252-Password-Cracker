@@ -1,2 +1,2 @@
 # LSINF1252-Password-Cracker
-LSNF1252 Projet 2019
+Projet LSINF1252 2019
