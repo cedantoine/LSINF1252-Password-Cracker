@@ -10,6 +10,8 @@
 #include <fcntl.h>
 
 #include "constantes.h"
+#include "./Template/reverse.h"
+#include "./Template/sha256.h"
 
 typedef struct node {
 struct node *next;
@@ -35,8 +37,10 @@ pthread_mutex_t mutex2; //mutex et semaphore de l'Inverseur
 sem_t empty2;
 sem_t full2;
 
-int nombreDeHash=0;
+int nombreDeHash=3;
 int fichierlu=0;
+
+int nombreDeReverse=0;
 
 //------------------------------------------------------------------------------
 
@@ -57,7 +61,7 @@ void initbuff1(){
 
 void initbuff2(){
 
-  buffer2=(char**)malloc(2*nombreDeSources*7);
+  buffer2=(char**)malloc(2*nombreDeSources*sizeof(char*));
 
   for(int i=0;i<2*nombreDeSources;i++){
     buffer2[i]=NULL;
@@ -72,10 +76,17 @@ void initbuff2(){
 
 //------------------------------------------------------------------------------
 
+/*fonction getHash
+*---------------------
+*La fonction va prendre les fichiers l'un après l'autre et va stocker
+*les hash (des fichiers) dans le buffer1.
+*/
+
 void getHash(){
 
   ssize_t lire=32;
   int lu=0;
+  int u=0;
 
   printf("%d\n",nombreDeFichiers);
   printf("%d\n",fichierlu);
@@ -107,24 +118,92 @@ void getHash(){
           memcpy(buffer1[i],(uint8_t*)buff,(size_t)32);
           break;
         }
-        for(int i=0;i<32;i++){
-          printf("%x2",buffer1[0][i]);
-        }
       }
       pthread_mutex_unlock(&mutex1);
       sem_post(&full1);
+
       lu=lu+32;
+      u++;
+      nombreDeHash++;
+      free(buff);
       printf("Relecture dans le fichier!\n");
     }
     printf("Nettoyage dans Hash!\n");
     close(ouvert);
     fichierlu++;
-    free(buff);
   }
 }
 
 //------------------------------------------------------------------------------
 
+/*fonction de reverse
+*---------------------
+*La fonction va prendre les hashs l'un après l'autre dans buffer1 et les
+*inverser, puis les remettre dans le buffer2.
+*/
+
+void inverseur(){
+  printf("Ouvert l'inverseur!\n");
+
+  char *motdepasse=malloc(17*sizeof(char));
+
+  uint8_t *hash=(uint8_t*)malloc(32);
+
+  //int rev;
+
+  while(nombreDeReverse!=nombreDeHash){
+
+    sem_wait(&full1); // attente d'un slot rempli
+    pthread_mutex_lock(&mutex1);
+
+    for(int i=0;i<32;i++){
+      printf("%x2",buffer1[0][i]);
+    }
+    printf("Rentré dans l'inverseur!\n");
+
+    for(int i = 0; i<2*nombreDeSources;i++){
+      if(buffer1[i]!=NULL){
+        memcpy(hash,(uint8_t*)buffer1[i],(size_t)32);
+        printf("Hash obtenu!\n");
+        free(buffer1[i]);
+        buffer1[i]=(uint8_t*)malloc(32);
+        buffer1[i]=NULL;
+        printf("Buffer1 vidé!\n");
+        break;
+      }
+    }
+    pthread_mutex_unlock(&mutex1);
+    sem_post(&empty1); // il y a un slot vide en plus
+    printf("Sorti premier buffer!\n");
+
+    for(int i=0;i<32;i++){
+      printf("%x2",hash[i]);
+    }
+
+    reversehash((uint8_t*)hash,(char*)motdepasse,(size_t)16);
+
+    printf("Hash inversé!\n");
+
+    sem_wait(&empty2); // attente d'un slot libre
+    pthread_mutex_lock(&mutex2);
+    for(int i = 0; i<2*nombreDeSources;i++){
+      if(buffer2[i]==NULL){
+        buffer2[i]=(char*)malloc(16);
+        strcpy(buffer2[i],motdepasse);
+        break;
+      }
+      printf("Motdepasse stocké!\n");
+      printf("%s %s\n",buffer2[0],"YAAAAASSS");
+    }
+    pthread_mutex_unlock(&mutex2);
+    sem_post(&full2); // il y a un slot rempli en plus
+    free(motdepasse);
+    motdepasse=malloc(17*sizeof(char));
+  }
+  nombreDeReverse++;
+}
+
+//------------------------------------------------------------------------------
 int main(int argc, const char *argv[]){
 
   int position=1;
@@ -172,18 +251,16 @@ int main(int argc, const char *argv[]){
   printf("%s\n",tabfichiers[0]);
 
   int error=0;
+
   //création des threads
   pthread_t threadsG[nombreDeSources];
-  // pthread_t threadsI[nombreDeThread];
+  pthread_t threadsI[nombreDeThread];
   // pthread_t threadsT[1];
+
   initbuff1();
 
-  printf("merde4\n");
-
-  //threads de reverse
+  //threads de getHash
   for(int i = 0; i<1; i++){
-    printf("caca2\n");
-    printf("%p\n",&nombreDeFichiers);
     error = pthread_create(&threadsG[i], NULL,(void*)&getHash ,NULL);
     if(error != 0){
       printf("Création du thread numéro %d \n", i);
@@ -191,11 +268,25 @@ int main(int argc, const char *argv[]){
     }
   }
 
-  //attente threads reverse
+  initbuff2();
+
+  //threads de reverse
   for(int i = 0; i<1; i++){
-    pthread_join(ThreadsG[i],NULL);
+    error = pthread_create(&threadsI[i], NULL,(void*)&inverseur ,NULL);
+    if(error != 0){
+      printf("Création du thread numéro %d \n", i);
+      return -1;
+    }
   }
 
-  initbuff2();
+  //attente threads  getHash
+  for(int i = 0; i<1; i++){
+    pthread_join(threadsG[i],NULL);
+  }
+
+  //attente threads reverse
+  for(int i = 0; i<1; i++){
+    pthread_join(threadsI[i],NULL);
+  }
 
 }
