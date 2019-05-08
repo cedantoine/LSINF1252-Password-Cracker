@@ -37,10 +37,16 @@ pthread_mutex_t mutex2; //mutex et semaphore de l'Inverseur
 sem_t empty2;
 sem_t full2;
 
-int nombreDeHash=3;
+struct node *head;
+struct node *current;
+
+int nombreDeHash=10;
 int fichierlu=0;
 
 int nombreDeReverse=0;
+
+int nombre=0; //nombre voyelles ou consonnes max de la liste
+int nombreTrie=0;
 
 //------------------------------------------------------------------------------
 
@@ -74,6 +80,14 @@ void initbuff2(){
   sem_init (&full2,0,0);
 }
 
+void initlistchainee(){
+  head=(struct node *)malloc(sizeof(struct node));
+  head->value=malloc(17*sizeof(char));
+  current = head;
+
+  printf("Liste Chainee initialisé!\n");
+}
+
 //------------------------------------------------------------------------------
 
 /*fonction getHash
@@ -88,11 +102,11 @@ void getHash(){
   int lu=0;
   int u=0;
 
-  printf("%d\n",nombreDeFichiers);
-  printf("%d\n",fichierlu);
+  //printf("%d\n",nombreDeFichiers);
+  //printf("%d\n",fichierlu);
 
   while(fichierlu!=nombreDeFichiers){
-    printf("Rentré dan le getHash!\n");
+    //printf("Rentré dan le getHash!\n");
 
     uint8_t *buff=(uint8_t*)malloc(32);
 
@@ -106,13 +120,13 @@ void getHash(){
     }
 
     while(lire==32){
-      printf("Lecture de Fichier!\n");
+      //printf("Lecture de Fichier!\n");
       lseek(ouvert,lu,SEEK_SET);
       lire=read(ouvert,(void*)buff,(size_t)32);
       sem_wait(&empty1); // attente d'un slot libre
       pthread_mutex_lock(&mutex1);
       for(int i = 0; i<2*nombreDeSources;i++){
-        printf("Stockage d'un hash!\n");
+        //printf("Stockage d'un hash!\n");
         if(buffer1[i]==NULL){
           buffer1[i]=(uint8_t*)malloc(32);
           memcpy(buffer1[i],(uint8_t*)buff,(size_t)32);
@@ -124,11 +138,10 @@ void getHash(){
 
       lu=lu+32;
       u++;
-      nombreDeHash++;
       free(buff);
-      printf("Relecture dans le fichier!\n");
+      //printf("Relecture dans le fichier!\n");
     }
-    printf("Nettoyage dans Hash!\n");
+    //printf("Nettoyage dans Hash!\n");
     close(ouvert);
     fichierlu++;
   }
@@ -143,13 +156,13 @@ void getHash(){
 */
 
 void inverseur(){
-  printf("Ouvert l'inverseur!\n");
+  //printf("Ouvert l'inverseur!\n");
 
   char *motdepasse=malloc(17*sizeof(char));
 
   uint8_t *hash=(uint8_t*)malloc(32);
 
-  //int rev;
+  //int l=0;
 
   while(nombreDeReverse!=nombreDeHash){
 
@@ -157,32 +170,32 @@ void inverseur(){
     pthread_mutex_lock(&mutex1);
 
     for(int i=0;i<32;i++){
-      printf("%x2",buffer1[0][i]);
+      //printf("%x2",buffer1[0][i]);
     }
-    printf("Rentré dans l'inverseur!\n");
+    //printf("Rentré dans l'inverseur!\n");
 
     for(int i = 0; i<2*nombreDeSources;i++){
       if(buffer1[i]!=NULL){
         memcpy(hash,(uint8_t*)buffer1[i],(size_t)32);
-        printf("Hash obtenu!\n");
+        //printf("Hash obtenu!\n");
         free(buffer1[i]);
         buffer1[i]=(uint8_t*)malloc(32);
         buffer1[i]=NULL;
-        printf("Buffer1 vidé!\n");
+        //printf("Buffer1 vidé!\n");
         break;
       }
     }
     pthread_mutex_unlock(&mutex1);
     sem_post(&empty1); // il y a un slot vide en plus
-    printf("Sorti premier buffer!\n");
+    //printf("Sorti premier buffer!\n");
 
-    for(int i=0;i<32;i++){
-      printf("%x2",hash[i]);
-    }
+    // for(int i=0;i<32;i++){
+    //   printf("%x2",hash[i]);
+    // }
 
     reversehash((uint8_t*)hash,(char*)motdepasse,(size_t)16);
 
-    printf("Hash inversé!\n");
+    //printf("Hash inversé!\n");
 
     sem_wait(&empty2); // attente d'un slot libre
     pthread_mutex_lock(&mutex2);
@@ -192,15 +205,101 @@ void inverseur(){
         strcpy(buffer2[i],motdepasse);
         break;
       }
-      printf("Motdepasse stocké!\n");
-      printf("%s %s\n",buffer2[0],"YAAAAASSS");
+      //printf("Motdepasse stocké!\n");
+      //printf("%s %s\n",buffer2[l],"YAAAAASSS");
     }
     pthread_mutex_unlock(&mutex2);
     sem_post(&full2); // il y a un slot rempli en plus
     free(motdepasse);
     motdepasse=malloc(17*sizeof(char));
+    //l++;
+    nombreDeReverse++;
   }
-  nombreDeReverse++;
+}
+
+//------------------------------------------------------------------------------
+
+/*fonction de comptage
+*---------------------
+*La fonction va compter le nombre de voyelles ou de consonnes d'un password.
+*@params: prend comme argument un password
+*/
+
+int compteur(char *password){
+  int j=0;
+  int nombretemp=0; //nombre de voyelles ou consonnes du mot
+  while(password[j]!='\0'){
+    if(type==0){
+      if(password[j]=='i' || password[j]=='o' || password[j]=='u'
+      || password[j]=='e' || password[j]=='a'|| password[j]=='y'){
+        nombretemp++;
+      }
+    }
+    else if(type==1){
+      if(password[j]!='i' && password[j]!='o' && password[j]!='u'
+      && password[j]!='e' && password[j]!='a'&& password[j]!='y'){
+        nombretemp++;
+      }
+    }
+    j++;
+  }
+  return(nombretemp);
+}
+
+/*fonction de triage
+*---------------------
+*La fonction va prendre les mots de passe les uns après les autres et les trier
+*selon leur type (plus d'occurence de consonne ou voyelle) puis les remettre
+*dans un nouveau tableau.
+*/
+
+void trieur(){
+
+  //printf("Trieur ouvert\n");
+
+  int r;
+  char *candidat=malloc(17*sizeof(char));
+
+  while(nombreTrie!=nombreDeHash){
+    //printf("Entré dans Trieur\n");
+
+    sem_wait(&full2); // attente d'un slot rempli
+    pthread_mutex_lock(&mutex2);
+    for(int i = 0; i<2*nombreDeSources;i++){
+      //printf("Entré dans boucle for de Trieur!\n");
+      if(buffer2[i]!=NULL){
+        strcpy(candidat,buffer2[i]);
+        printf("Strcpy done!\n");
+        free(buffer2[i]);
+        buffer2[i]=malloc(17*sizeof(char));
+        buffer2[i]=NULL;
+        break;
+      }
+    }
+    pthread_mutex_unlock(&mutex2);
+    sem_post(&empty2); // il y a un slot vide en plus
+    printf("%s\n",candidat );
+    //printf("Mdp copié!\n");
+    r=compteur(candidat);
+    //printf("Nb calculé!\n");
+    printf("%d\n",r);
+    if(r>nombre){
+      nombre=r;
+      printf("Il est plus grand!\n");
+      //printf("%d\n",nombre);
+      strcpy(head->value,candidat);
+      //printf("Ca marche?\n");
+      head->next=NULL;
+      //printf("Et la?\n");
+    }
+    // else if(r==nombre){
+    //   struct node *next=(struct node *)malloc(sizeof(struct node));
+    //   strcpy(next->value,candidat);
+    //   current->next=next;
+    //   current=next;
+    // }
+    nombreTrie++;
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -239,23 +338,23 @@ int main(int argc, const char *argv[]){
   int x=0;
 
   tabfichiers=malloc(nombreDeFichiers*sizeof(char*));
-  printf("Tableau de Fichier initialisé!\n");
+  //printf("Tableau de Fichier initialisé!\n");
   for(index = position; index < argc ;index++){
     tabfichiers[x]=argv[index];
     x++;
   }
-  printf("Fichiers pointés!\n");
+  //printf("Fichiers pointés!\n");
 
-  printf("%d\n",nombreDeFichiers);
-  printf("%d\n",nombreDeThread);
-  printf("%s\n",tabfichiers[0]);
+  //printf("%d\n",nombreDeFichiers);
+  //printf("%d\n",nombreDeThread);
+  //printf("%s\n",tabfichiers[0]);
 
   int error=0;
 
   //création des threads
-  pthread_t threadsG[nombreDeSources];
+  pthread_t threadsG[1];
   pthread_t threadsI[nombreDeThread];
-  // pthread_t threadsT[1];
+  pthread_t threadsT[1];
 
   initbuff1();
 
@@ -279,6 +378,17 @@ int main(int argc, const char *argv[]){
     }
   }
 
+  initlistchainee();
+
+  //threads de triage
+  for(int i = 0; i<1; i++){
+    error = pthread_create(&threadsT[i], NULL,(void*)&trieur ,NULL);
+    if(error != 0){
+      printf("Création du thread numéro %d \n", i);
+      return -1;
+    }
+  }
+
   //attente threads  getHash
   for(int i = 0; i<1; i++){
     pthread_join(threadsG[i],NULL);
@@ -288,5 +398,12 @@ int main(int argc, const char *argv[]){
   for(int i = 0; i<1; i++){
     pthread_join(threadsI[i],NULL);
   }
+
+  //attente threads de triage
+  for(int i = 0; i<1; i++){
+    pthread_join(threadsT[i],NULL);
+  }
+
+  return EXIT_SUCCESS;
 
 }
