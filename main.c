@@ -269,7 +269,7 @@ void trieur(){
       //printf("Entré dans boucle for de Trieur!\n");
       if(buffer2[i]!=NULL){
         strcpy(candidat,buffer2[i]);
-        printf("Strcpy done!\n");
+        //printf("Strcpy done!\n");
         free(buffer2[i]);
         buffer2[i]=malloc(17*sizeof(char));
         buffer2[i]=NULL;
@@ -282,7 +282,7 @@ void trieur(){
     //printf("Mdp copié!\n");
     r=compteur(candidat);
     //printf("Nb calculé!\n");
-    printf("%d\n",r);
+    //printf("%d\n",r);
     if(r>nombre){
       nombre=r;
       printf("Il est plus grand!\n");
