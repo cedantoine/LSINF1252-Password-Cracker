@@ -24,6 +24,7 @@ int type; //0=voyelles 1=consonnes
 int sortie; //0=rien 1=fichier de sortie donné
 int nombreDeSources=1;
 int nombreDeFichiers=1;
+int nombreDeThread=1;
 
 const char** tabfichiers;
 
@@ -31,22 +32,28 @@ uint8_t **buffer1;
 pthread_mutex_t mutex1; //mutex et semaphore du getHash
 sem_t empty1;
 sem_t full1;
+pthread_mutex_t mutex3;
 
 char **buffer2;
 pthread_mutex_t mutex2; //mutex et semaphore de l'Inverseur
 sem_t empty2;
 sem_t full2;
+pthread_mutex_t mutex4;
 
 struct node *head;
 struct node *current;
+pthread_mutex_t mutex5;
 
-int nombreDeHash=10;
+int nombreDeHash=0;
 int fichierlu=0;
 
 int nombreDeReverse=0;
 
 int nombre=0; //nombre voyelles ou consonnes max de la liste
 int nombreTrie=0;
+
+int joinG=0;
+int joinI=0;
 
 //------------------------------------------------------------------------------
 
@@ -63,6 +70,7 @@ void initbuff1(){
   pthread_mutex_init (&mutex1, NULL);
   sem_init (&empty1,0,nombreDeSources*2);
   sem_init (&full1,0,0);
+  pthread_mutex_init (&mutex3, NULL);
 }
 
 void initbuff2(){
@@ -78,12 +86,14 @@ void initbuff2(){
   pthread_mutex_init (&mutex2, NULL);
   sem_init (&empty2,0,nombreDeSources*2);
   sem_init (&full2,0,0);
+  pthread_mutex_init (&mutex4, NULL);
 }
 
 void initlistchainee(){
   head=(struct node *)malloc(sizeof(struct node));
   head->value=malloc(17*sizeof(char));
   current = head;
+  pthread_mutex_init (&mutex5, NULL);
 
   printf("Liste Chainee initialisé!\n");
 }
@@ -106,7 +116,7 @@ void getHash(){
   //printf("%d\n",fichierlu);
 
   while(fichierlu!=nombreDeFichiers){
-    //printf("Rentré dan le getHash!\n");
+
 
     uint8_t *buff=(uint8_t*)malloc(32);
 
@@ -120,6 +130,7 @@ void getHash(){
     }
 
     while(lire==32){
+      printf("Rentré dan le getHash!\n");
       //printf("Lecture de Fichier!\n");
       lseek(ouvert,lu,SEEK_SET);
       lire=read(ouvert,(void*)buff,(size_t)32);
@@ -139,9 +150,12 @@ void getHash(){
       lu=lu+32;
       u++;
       free(buff);
-      //printf("Relecture dans le fichier!\n");
+      pthread_mutex_lock(&mutex3);
+      nombreDeHash++;
+      pthread_mutex_unlock(&mutex3);
+      printf("Sorti du get Hash!\n");
     }
-    //printf("Nettoyage dans Hash!\n");
+    printf("Kill Hash!\n");
     close(ouvert);
     fichierlu++;
   }
@@ -164,7 +178,7 @@ void inverseur(){
 
   //int l=0;
 
-  while(nombreDeReverse!=nombreDeHash){
+  while(!(nombreDeReverse==nombreDeHash && joinG==1)){
 
     sem_wait(&full1); // attente d'un slot rempli
     pthread_mutex_lock(&mutex1);
@@ -172,7 +186,7 @@ void inverseur(){
     for(int i=0;i<32;i++){
       //printf("%x2",buffer1[0][i]);
     }
-    //printf("Rentré dans l'inverseur!\n");
+    printf("Rentré dans l'inverseur!\n");
 
     for(int i = 0; i<2*nombreDeSources;i++){
       if(buffer1[i]!=NULL){
@@ -213,8 +227,12 @@ void inverseur(){
     free(motdepasse);
     motdepasse=malloc(17*sizeof(char));
     //l++;
+    pthread_mutex_lock(&mutex4);
     nombreDeReverse++;
+    pthread_mutex_unlock(&mutex4);
+    printf("Sorti de L'Inverseur\n");
   }
+  printf("Kill Inverseur\n");
 }
 
 //------------------------------------------------------------------------------
@@ -260,8 +278,8 @@ void trieur(){
   int r;
   char *candidat=malloc(17*sizeof(char));
 
-  while(nombreTrie!=nombreDeHash){
-    //printf("Entré dans Trieur\n");
+  while(!(nombreTrie==nombreDeReverse && joinI==1)){
+    printf("Entré dans Trieur\n");
 
     sem_wait(&full2); // attente d'un slot rempli
     pthread_mutex_lock(&mutex2);
@@ -298,15 +316,18 @@ void trieur(){
     //   current->next=next;
     //   current=next;
     // }
+    pthread_mutex_lock(&mutex5);
     nombreTrie++;
+    pthread_mutex_unlock(&mutex5);
+    printf("Sorti du trieur\n");
   }
+  printf("Kill Trieur\n");
 }
 
 //------------------------------------------------------------------------------
 int main(int argc, const char *argv[]){
 
   int position=1;
-  int nombreDeThread=1;
 
   type=0;
   sortie=0;
@@ -320,6 +341,7 @@ int main(int argc, const char *argv[]){
     if(temp>=1){
       nombreDeThread=temp;
     }
+    printf("%d\n",nombreDeThread);
     position=position+2;
   }
 
@@ -370,7 +392,7 @@ int main(int argc, const char *argv[]){
   initbuff2();
 
   //threads de reverse
-  for(int i = 0; i<1; i++){
+  for(int i = 0; i<2; i++){
     error = pthread_create(&threadsI[i], NULL,(void*)&inverseur ,NULL);
     if(error != 0){
       printf("Création du thread numéro %d \n", i);
@@ -392,12 +414,15 @@ int main(int argc, const char *argv[]){
   //attente threads  getHash
   for(int i = 0; i<1; i++){
     pthread_join(threadsG[i],NULL);
+    joinG++;
   }
 
   //attente threads reverse
-  for(int i = 0; i<1; i++){
+  for(int i = 0; i<2; i++){
     pthread_join(threadsI[i],NULL);
+    joinI++;
   }
+
 
   //attente threads de triage
   for(int i = 0; i<1; i++){
