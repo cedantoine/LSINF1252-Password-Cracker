@@ -117,7 +117,6 @@ void getHash(){
 
   while(fichierlu!=nombreDeFichiers){
 
-
     uint8_t *buff=(uint8_t*)malloc(32);
 
     const char *file=tabfichiers[fichierlu];
@@ -130,10 +129,14 @@ void getHash(){
     }
 
     while(lire==32){
-      printf("Rentré dan le getHash!\n");
-      //printf("Lecture de Fichier!\n");
+      //printf("Rentré dan le getHash!\n");
+
       lseek(ouvert,lu,SEEK_SET);
       lire=read(ouvert,(void*)buff,(size_t)32);
+      if(ouvert<0){
+        break;
+      }
+      //printf("Lecture de Fichier!\n");
       sem_wait(&empty1); // attente d'un slot libre
       pthread_mutex_lock(&mutex1);
       for(int i = 0; i<2*nombreDeSources;i++){
@@ -150,10 +153,12 @@ void getHash(){
       lu=lu+32;
       u++;
       free(buff);
+
       pthread_mutex_lock(&mutex3);
       nombreDeHash++;
       pthread_mutex_unlock(&mutex3);
-      printf("Sorti du get Hash!\n");
+
+      //printf("Sorti du get Hash!\n");
     }
     printf("Kill Hash!\n");
     close(ouvert);
@@ -183,10 +188,10 @@ void inverseur(){
     sem_wait(&full1); // attente d'un slot rempli
     pthread_mutex_lock(&mutex1);
 
-    for(int i=0;i<32;i++){
-      //printf("%x2",buffer1[0][i]);
-    }
-    printf("Rentré dans l'inverseur!\n");
+    // for(int i=0;i<32;i++){
+    //   printf("%x2",buffer1[0][i]);
+    // }
+    //printf("Rentré dans l'inverseur!\n");
 
     for(int i = 0; i<2*nombreDeSources;i++){
       if(buffer1[i]!=NULL){
@@ -199,13 +204,15 @@ void inverseur(){
         break;
       }
     }
+    //printf("hash recu?????????????????????????????????\n");
+    for(int i=0;i<32;i++){
+      printf("%x2",hash[i]);
+    }
+    printf(" \n");
     pthread_mutex_unlock(&mutex1);
     sem_post(&empty1); // il y a un slot vide en plus
-    //printf("Sorti premier buffer!\n");
 
-    // for(int i=0;i<32;i++){
-    //   printf("%x2",hash[i]);
-    // }
+
 
     reversehash((uint8_t*)hash,(char*)motdepasse,(size_t)16);
 
@@ -213,24 +220,25 @@ void inverseur(){
 
     sem_wait(&empty2); // attente d'un slot libre
     pthread_mutex_lock(&mutex2);
+    printf("Hash inversé !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
     for(int i = 0; i<2*nombreDeSources;i++){
       if(buffer2[i]==NULL){
         buffer2[i]=(char*)malloc(16);
         strcpy(buffer2[i],motdepasse);
         break;
       }
-      //printf("Motdepasse stocké!\n");
       //printf("%s %s\n",buffer2[l],"YAAAAASSS");
     }
     pthread_mutex_unlock(&mutex2);
     sem_post(&full2); // il y a un slot rempli en plus
+    //printf("Motdepasse stocké!\n");
     free(motdepasse);
     motdepasse=malloc(17*sizeof(char));
     //l++;
     pthread_mutex_lock(&mutex4);
     nombreDeReverse++;
     pthread_mutex_unlock(&mutex4);
-    printf("Sorti de L'Inverseur\n");
+    //printf("Sorti de L'Inverseur\n");
   }
   printf("Kill Inverseur\n");
 }
@@ -279,7 +287,7 @@ void trieur(){
   char *candidat=malloc(17*sizeof(char));
 
   while(!(nombreTrie==nombreDeReverse && joinI==1)){
-    printf("Entré dans Trieur\n");
+    //printf("Entré dans Trieur\n");
 
     sem_wait(&full2); // attente d'un slot rempli
     pthread_mutex_lock(&mutex2);
@@ -294,16 +302,16 @@ void trieur(){
         break;
       }
     }
+    printf("%s\n",candidat );
     pthread_mutex_unlock(&mutex2);
     sem_post(&empty2); // il y a un slot vide en plus
-    printf("%s\n",candidat );
     //printf("Mdp copié!\n");
     r=compteur(candidat);
     //printf("Nb calculé!\n");
     //printf("%d\n",r);
     if(r>nombre){
       nombre=r;
-      printf("Il est plus grand!\n");
+      //printf("Il est plus grand!\n");
       //printf("%d\n",nombre);
       strcpy(head->value,candidat);
       //printf("Ca marche?\n");
@@ -319,7 +327,7 @@ void trieur(){
     pthread_mutex_lock(&mutex5);
     nombreTrie++;
     pthread_mutex_unlock(&mutex5);
-    printf("Sorti du trieur\n");
+    //printf("Sorti du trieur\n");
   }
   printf("Kill Trieur\n");
 }
@@ -392,7 +400,7 @@ int main(int argc, const char *argv[]){
   initbuff2();
 
   //threads de reverse
-  for(int i = 0; i<2; i++){
+  for(int i = 0; i<1; i++){
     error = pthread_create(&threadsI[i], NULL,(void*)&inverseur ,NULL);
     if(error != 0){
       printf("Création du thread numéro %d \n", i);
