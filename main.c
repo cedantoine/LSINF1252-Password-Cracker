@@ -504,6 +504,24 @@ int main(int argc, const char *argv[]){
       head=head->next;
     }
   }
+  
+  current=head;
+  while(current->next!=NULL){
+    if(sortie==1){
+      int ouvert = open(fileout,O_APPEND); //remplacer par le nom du file de sortie !!!!!!!!!!!!!!!!!!i
+      if(ouvert<0){
+        printf("Ne peut pas ouvrir le fichier\n");
+      }
+      int ecriture=write(ouvert,(void *)current->value, sizeof(current->value));
+      if(ecriture!=0){
+        printf("Problème d'écriture dans le fichier\n");
+      }
+    }
+    else{
+      printf(" %s \n", curent->value);
+    }
+    current=current->next;
+  }
 
   return EXIT_SUCCESS;
 
