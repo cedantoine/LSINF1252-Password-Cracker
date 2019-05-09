@@ -428,7 +428,7 @@ int main(int argc, const char *argv[]){
   nombreDeFichiers = argc-position;
   int index;
   int x=0;
-  //printf("%s %d\n","nombreDeFichiers",nombreDeFichiers );
+  printf("%s %d\n","nombreDeFichiers",nombreDeFichiers );
 
   tabfichiers=malloc(nombreDeFichiers*sizeof(char*));
   //printf("Tableau de Fichier initialisé!\n");
@@ -508,24 +508,28 @@ int main(int argc, const char *argv[]){
   // }
 
   current=head;
-  int ouvert = open(fichiersortie,O_RDWR|O_APPEND|O_CREAT);
-  if(ouvert<0){
-    printf("Ne peut pas ouvrir le fichier\n");
-  }
-  while(current!=NULL){
-    if(sortie==1){
-      int ecriture=write(ouvert,(void *)current->value, (size_t)sizeof(char)*17);
-      if(ecriture<0){
-        printf("Problème d'écriture dans le fichier\n");
-      }
-      write(ouvert,"\n",1);
+  if(sortie==1){
+    int ouvert = open(fichiersortie,O_RDWR|O_APPEND|O_CREAT);
+    if(ouvert<0){
+      printf("Ne peut pas ouvrir le fichier\n");
     }
-    else{
-      printf(" %s \n", current->value);
-    }
-    current=current->next;
+    while(current!=NULL){
+        int ecriture=write(ouvert,(void *)current->value, (size_t)sizeof(char)*17);
+        if(ecriture<0){
+          printf("Problème d'écriture dans le fichier\n");
+        }
+        write(ouvert,"\n",1);
+        current=current->next;
   }
   close(ouvert);
+}
+else{
+  printf("Les candidats sont:\n");
+  while(current!=NULL){
+    printf("%s\n", current->value);
+    current=current->next;
+  }
+}
 
   return EXIT_SUCCESS;
 
