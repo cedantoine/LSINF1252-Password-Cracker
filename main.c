@@ -499,13 +499,15 @@ int main(int argc, const char *argv[]){
     pthread_join(threadsT[i],NULL);
   }
 
-  // printf("Les canditats sont:\n");
-  // if(sortie==0){
-  //   while(head!=NULL){
-  //     printf("%s\n",head->value);
-  //     head=head->next;
-  //   }
-  // }
+  pthread_mutex_destroy(&mutex1);
+  pthread_mutex_destroy(&mutex2);
+  pthread_mutex_destroy(&mutex3);
+  pthread_mutex_destroy(&mutex4);
+  pthread_mutex_destroy(&mutex5);
+  pthread_mutex_destroy(&mutex6);
+  pthread_mutex_destroy(&mutex7);
+
+
 
   current=head;
   if(sortie==1){
@@ -530,6 +532,8 @@ else{
     current=current->next;
   }
 }
+  free(head);
+  free(current);
 
   return EXIT_SUCCESS;
 
