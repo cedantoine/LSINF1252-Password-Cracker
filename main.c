@@ -169,11 +169,13 @@ void getHash(){
       free(buff);
       //lire++;
 
+      //printf("Sorti du get Hash!\n");
+
       pthread_mutex_lock(&mutex3);
       nombreDeHash++;
       pthread_mutex_unlock(&mutex3);
 
-      //printf("Sorti du get Hash!\n");
+
     }
     close(ouvert);
 
@@ -208,8 +210,11 @@ void inverseur(){
   while(!(nombreDeReverse==nombreDeHash && joinG==1)){
 
     pthread_mutex_unlock(&mutex3);
+    pthread_mutex_unlock(&mutex4);
 
     sem_wait(&full1); // attente d'un slot rempli
+
+    pthread_mutex_lock(&mutex4);
     nombreDeReverse++;
     pthread_mutex_unlock(&mutex4);
 
@@ -322,7 +327,7 @@ void trieur(){
   pthread_mutex_lock(&mutex4);
   pthread_mutex_lock(&mutex5);
 
-  while(!(nombreTrie==nombreDeReverse && joinI==2)){
+  while(!(nombreTrie==nombreDeReverse && joinI==nombreDeThread)){
     //printf("Entré dans Trieur\n");
 
     pthread_mutex_unlock(&mutex4);
@@ -459,7 +464,7 @@ int main(int argc, const char *argv[]){
   initbuff2();
 
   //threads de reverse
-  for(int i = 0; i<2; i++){
+  for(int i = 0; i<nombreDeThread; i++){
     error = pthread_create(&threadsI[i], NULL,(void*)&inverseur ,NULL);
     if(error != 0){
       printf("Création du thread numéro %d \n", i);
@@ -484,7 +489,7 @@ int main(int argc, const char *argv[]){
   }
 
   //attente threads reverse
-  for(int i = 0; i<2; i++){
+  for(int i = 0; i<nombreDeThread; i++){
     pthread_join(threadsI[i],NULL);
   }
 
