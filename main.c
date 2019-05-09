@@ -186,6 +186,7 @@ void getHash(){
   joinG++;
   pthread_mutex_unlock(&mutex7);
   //printf("Kill Hash!\n");
+  pthread_exit(NULL);
 }
 
 //------------------------------------------------------------------------------
@@ -278,6 +279,8 @@ void inverseur(){
   pthread_mutex_lock(&mutex6);
   joinI++;
   pthread_mutex_unlock(&mutex6);
+
+  pthread_exit(NULL);
 }
 
 //------------------------------------------------------------------------------
@@ -389,6 +392,7 @@ void trieur(){
   pthread_mutex_unlock(&mutex4);
   pthread_mutex_unlock(&mutex5);
 
+  pthread_exit(NULL);
   //printf("Kill Trieur\n");
 }
 
@@ -507,7 +511,10 @@ int main(int argc, const char *argv[]){
   pthread_mutex_destroy(&mutex6);
   pthread_mutex_destroy(&mutex7);
 
-
+  sem_destroy(&empty1);
+  sem_destroy(&empty2);
+  sem_destroy(&full1);
+  sem_destroy(&full2);
 
   current=head;
   if(sortie==1){
@@ -516,22 +523,22 @@ int main(int argc, const char *argv[]){
       printf("Ne peut pas ouvrir le fichier\n");
     }
     while(current!=NULL){
-        int ecriture=write(ouvert,(void *)current->value, (size_t)sizeof(char)*17);
-        if(ecriture<0){
-          printf("Problème d'écriture dans le fichier\n");
-        }
-        write(ouvert,"\n",1);
-        current=current->next;
+      int ecriture=write(ouvert,(void *)current->value, (size_t)sizeof(char)*17);
+      if(ecriture<0){
+        printf("Problème d'écriture dans le fichier\n");
+      }
+      write(ouvert,"\n",1);
+      current=current->next;
+    }
+    close(ouvert);
   }
-  close(ouvert);
-}
-else{
-  printf("Les candidats sont:\n");
-  while(current!=NULL){
-    printf("%s\n", current->value);
-    current=current->next;
+  else{
+    printf("Les candidats sont:\n");
+    while(current!=NULL){
+      printf("%s\n", current->value);
+      current=current->next;
+    }
   }
-}
   free(head);
   free(current);
 
