@@ -208,11 +208,8 @@ void inverseur(){
   while(!(nombreDeReverse==nombreDeHash && joinG==1)){
 
     pthread_mutex_unlock(&mutex3);
-    pthread_mutex_unlock(&mutex4);
 
     sem_wait(&full1); // attente d'un slot rempli
-
-    pthread_mutex_lock(&mutex4);
     nombreDeReverse++;
     pthread_mutex_unlock(&mutex4);
 
@@ -396,7 +393,7 @@ int main(int argc, const char *argv[]){
 
   int position=1;
 
-  type=0;
+  type=1;
   sortie=0;
 
   if(argc==0){
