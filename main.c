@@ -27,6 +27,7 @@ int nombreDeFichiers=1;
 int nombreDeThread=1;
 
 const char** tabfichiers;
+const char* fichiersortie;
 
 uint8_t **buffer1;
 pthread_mutex_t mutex1; //mutex et semaphore du getHash
@@ -397,7 +398,7 @@ int main(int argc, const char *argv[]){
 
   int position=1;
 
-  type=1;
+  type=0;
   sortie=0;
 
   if(argc==0){
@@ -420,7 +421,9 @@ int main(int argc, const char *argv[]){
 
   if(argc > 2 && strcmp(argv[position],"-o")==0){
     sortie=1;
-    position++;
+    fichiersortie=malloc(sizeof(char*));
+    fichiersortie=argv[position+1];
+    position=position+2;
   }
 
   nombreDeFichiers = argc-position;
@@ -497,31 +500,33 @@ int main(int argc, const char *argv[]){
     pthread_join(threadsT[i],NULL);
   }
 
-  printf("Les canditats sont:\n");
-  if(sortie==0){
-    while(head!=NULL){
-      printf("%s\n",head->value);
-      head=head->next;
-    }
-  }
-  
+  // printf("Les canditats sont:\n");
+  // if(sortie==0){
+  //   while(head!=NULL){
+  //     printf("%s\n",head->value);
+  //     head=head->next;
+  //   }
+  // }
+
   current=head;
-  while(current->next!=NULL){
+  int ouvert = open(fichiersortie,O_RDWR|O_APPEND|O_CREAT);
+  if(ouvert<0){
+    printf("Ne peut pas ouvrir le fichier\n");
+  }
+  while(current!=NULL){
     if(sortie==1){
-      int ouvert = open(fileout,O_APPEND); //remplacer par le nom du file de sortie !!!!!!!!!!!!!!!!!!i
-      if(ouvert<0){
-        printf("Ne peut pas ouvrir le fichier\n");
-      }
-      int ecriture=write(ouvert,(void *)current->value, sizeof(current->value));
-      if(ecriture!=0){
+      int ecriture=write(ouvert,(void *)current->value, (size_t)sizeof(char)*17);
+      if(ecriture<0){
         printf("Problème d'écriture dans le fichier\n");
       }
+      write(ouvert,"\n",1);
     }
     else{
-      printf(" %s \n", curent->value);
+      printf(" %s \n", current->value);
     }
     current=current->next;
   }
+  close(ouvert);
 
   return EXIT_SUCCESS;
 
