@@ -144,10 +144,10 @@ void getHash(){
         break;
       }
 
-      for(int i=0;i<32;i++){
-        printf("%x2",buff[i]);
-      }
-      printf(" \n");
+      // for(int i=0;i<32;i++){
+      //   printf("%x2",buff[i]);
+      // }
+      // printf(" \n");
 
       //printf("Lecture de Fichier!\n");
       sem_wait(&empty1); // attente d'un slot libre
@@ -202,8 +202,13 @@ void inverseur(){
   uint8_t *hash=(uint8_t*)malloc(32);
 
   //int l=0;
+  pthread_mutex_lock(&mutex3);
+  pthread_mutex_lock(&mutex4);
 
   while(!(nombreDeReverse==nombreDeHash && joinG==1)){
+
+    pthread_mutex_unlock(&mutex3);
+    pthread_mutex_unlock(&mutex4);
 
     sem_wait(&full1); // attente d'un slot rempli
 
@@ -260,7 +265,14 @@ void inverseur(){
 
     //printf("Sorti de L'Inverseur\n");
 
+    pthread_mutex_lock(&mutex3);
+    pthread_mutex_lock(&mutex4);
+
   }
+
+  pthread_mutex_unlock(&mutex3);
+  pthread_mutex_unlock(&mutex4);
+
   printf("Kill Inverseur\n");
   pthread_mutex_lock(&mutex6);
   joinI++;
@@ -310,8 +322,15 @@ void trieur(){
   int r;
   char *candidat=malloc(17*sizeof(char));
 
+  pthread_mutex_lock(&mutex4);
+  pthread_mutex_lock(&mutex5);
+
   while(!(nombreTrie==nombreDeReverse && joinI==2)){
     //printf("Entré dans Trieur\n");
+
+    pthread_mutex_unlock(&mutex4);
+    pthread_mutex_unlock(&mutex5);
+
     pthread_mutex_lock(&mutex5);
     nombreTrie++;
     //printf("%d\n",nombreTrie);
@@ -360,7 +379,15 @@ void trieur(){
     }
 
     //printf("Sorti du trieur\n");
+
+    pthread_mutex_lock(&mutex4);
+    pthread_mutex_lock(&mutex5);
+
   }
+
+  pthread_mutex_unlock(&mutex4);
+  pthread_mutex_unlock(&mutex5);
+
   printf("Kill Trieur\n");
 }
 
