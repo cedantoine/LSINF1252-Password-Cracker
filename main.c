@@ -185,7 +185,7 @@ void getHash(){
   pthread_mutex_lock(&mutex7);
   joinG++;
   pthread_mutex_unlock(&mutex7);
-  printf("Kill Hash!\n");
+  //printf("Kill Hash!\n");
 }
 
 //------------------------------------------------------------------------------
@@ -203,7 +203,6 @@ void inverseur(){
 
   uint8_t *hash=(uint8_t*)malloc(32);
 
-  //int l=0;
   pthread_mutex_lock(&mutex3);
   pthread_mutex_lock(&mutex4);
 
@@ -275,7 +274,7 @@ void inverseur(){
   pthread_mutex_unlock(&mutex3);
   pthread_mutex_unlock(&mutex4);
 
-  printf("Kill Inverseur\n");
+  //printf("Kill Inverseur\n");
   pthread_mutex_lock(&mutex6);
   joinI++;
   pthread_mutex_unlock(&mutex6);
@@ -390,7 +389,7 @@ void trieur(){
   pthread_mutex_unlock(&mutex4);
   pthread_mutex_unlock(&mutex5);
 
-  printf("Kill Trieur\n");
+  //printf("Kill Trieur\n");
 }
 
 //------------------------------------------------------------------------------
@@ -429,7 +428,7 @@ int main(int argc, const char *argv[]){
   nombreDeFichiers = argc-position;
   int index;
   int x=0;
-  printf("%s %d\n","nombreDeFichiers",nombreDeFichiers );
+  //printf("%s %d\n","nombreDeFichiers",nombreDeFichiers );
 
   tabfichiers=malloc(nombreDeFichiers*sizeof(char*));
   //printf("Tableau de Fichier initialisé!\n");
