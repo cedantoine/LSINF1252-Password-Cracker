@@ -432,7 +432,7 @@ int main(int argc, const char *argv[]){
   nombreDeFichiers = argc-position;
   int index;
   int x=0;
-  printf("%s %d\n","nombreDeFichiers",nombreDeFichiers );
+  //printf("%s %d\n","nombreDeFichiers",nombreDeFichiers );
 
   tabfichiers=malloc(nombreDeFichiers*sizeof(char*));
   //printf("Tableau de Fichier initialisé!\n");
