@@ -13,5 +13,9 @@ reverse.o: Template/reverse.c Template/reverse.h
 sha256.o: Template/sha256.c Template/sha256.h
 	gcc -Wall -Werror -pthread -c Template/sha256.c
 
+test:
+	cd Test && make
+	make clean
+
 clean:
-	rm -rf *.o Template/*.o Tests/*.o Fonctions/*.o
+	rm -rf *.o Template/*.o Test/*.o Fonctions/*.o

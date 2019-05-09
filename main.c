@@ -149,7 +149,6 @@ void getHash(){
       }
       pthread_mutex_unlock(&mutex1);
       sem_post(&full1);
-
       lu=lu+32;
       u++;
       free(buff);
