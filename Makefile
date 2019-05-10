@@ -19,4 +19,4 @@ sha256.o: src/Template/sha256.c src/Template/sha256.h
 clean:
 	rm -rf *.o cracker src/Template/*.o tests/*.o src/main.o
 
-all: cracker tests
+all: cracker #tests
