@@ -11,8 +11,33 @@
 #include "../constantes.h"
 #include "../Template/reverse.h"
 #include "../Template/sha256.h"
-#include <CUnit/Basic.h>
+#include "CUnit/Basic.h"
 #include <CUnit/CUnit.h>
+
+
+int type;
+
+int compteur(char *password){
+  int j=0;
+  int nombretemp=0; //nombre de voyelles ou consonnes du mot
+  while(password[j]!='\0'){
+    if(type==0){
+      if(password[j]=='i' || password[j]=='o' || password[j]=='u'
+      || password[j]=='e' || password[j]=='a'|| password[j]=='y'){
+        nombretemp++;
+      }
+    }
+    else if(type==1){
+      if(password[j]!='i' && password[j]!='o' && password[j]!='u'
+      && password[j]!='e' && password[j]!='a'&& password[j]!='y'){
+        nombretemp++;
+      }
+    }
+    j++;
+  }
+  return(nombretemp);
+}
+
 
 void compteurvoy(void) { //test servant a verifier qu'il compte bien le nombre de voyelle
   char *voy="coucou";

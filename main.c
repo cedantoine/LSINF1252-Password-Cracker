@@ -96,9 +96,10 @@ void initbuff2(){
 
 void initlistchainee(){
   head=(struct node *)malloc(sizeof(struct node));
-  head->value=malloc(17*sizeof(char));
   head->value=NULL;
+  head->next=NULL;
   current = head;
+  current->value=head->value;
   pthread_mutex_init (&mutex5, NULL);
   pthread_mutex_init (&mutex7, NULL);
 
@@ -117,7 +118,7 @@ void getHash(){
 
   int lire=32;
   int lu=0;
-
+  uint8_t *buff;
 
   //printf("%d\n",nombreDeFichiers);
   //printf("%d\n",fichierlu);
@@ -125,7 +126,7 @@ void getHash(){
   while(fichierlu!=nombreDeFichiers){
 
     lu=0;
-    uint8_t *buff=(uint8_t*)malloc(32);
+
 
     const char *file=tabfichiers[fichierlu];
 
@@ -178,7 +179,7 @@ void getHash(){
 
     }
     close(ouvert);
-
+    free(buff);
     fichierlu++;
 
   }
@@ -230,7 +231,6 @@ void inverseur(){
         memcpy(hash,(uint8_t*)buffer1[i],(size_t)32);
         //printf("Hash obtenu!\n");
         free(buffer1[i]);
-        buffer1[i]=(uint8_t*)malloc(32);
         buffer1[i]=NULL;
         //printf("Buffer1 vidé!\n");
         break;
@@ -275,6 +275,8 @@ void inverseur(){
   pthread_mutex_unlock(&mutex3);
   pthread_mutex_unlock(&mutex4);
 
+  free(motdepasse);
+  free(hash);
   //printf("Kill Inverseur\n");
   pthread_mutex_lock(&mutex6);
   joinI++;
@@ -349,7 +351,6 @@ void trieur(){
         strcpy(candidat,buffer2[i]);
         //printf("Strcpy done!\n");
         free(buffer2[i]);
-        buffer2[i]=malloc(17*sizeof(char));
         buffer2[i]=NULL;
         break;
       }
@@ -366,6 +367,10 @@ void trieur(){
       //printf("Il est plus grand!\n");
       //printf("%d\n",nombre);
       free(head->value);
+      if(head->next!=NULL){
+        free(head->next);
+      }
+
       head->value=malloc(17*sizeof(char));
       strcpy(head->value,candidat);
       //printf("%s\n",head->value);
@@ -391,7 +396,7 @@ void trieur(){
 
   pthread_mutex_unlock(&mutex4);
   pthread_mutex_unlock(&mutex5);
-
+  free(candidat);
   pthread_exit(NULL);
   //printf("Kill Trieur\n");
 }
@@ -522,26 +527,32 @@ int main(int argc, const char *argv[]){
     if(ouvert<0){
       printf("Ne peut pas ouvrir le fichier\n");
     }
-    while(current!=NULL){
-      int ecriture=write(ouvert,(void *)current->value, (size_t)sizeof(char)*17);
+    while(head!=NULL){
+      int ecriture=write(ouvert,(void *)head->value, (size_t)sizeof(char)*17);
       if(ecriture<0){
         printf("Problème d'écriture dans le fichier\n");
       }
       write(ouvert,"\n",1);
-      current=current->next;
+      free(head->value);
+      head=head->next;
+      free(current);
+      current=head;
     }
     close(ouvert);
   }
   else{
     printf("Les candidats sont:\n");
-    while(current!=NULL){
-      printf("%s\n", current->value);
-      current=current->next;
+    while(head!=NULL){
+      printf("%s\n", head->value);
+      free(head->value);
+      head=head->next;
+      free(current);
+      current=head;
     }
   }
-  free(head);
-  free(current);
-
+  free(tabfichiers);
+  free(buffer1);
+  free(buffer2);
   return EXIT_SUCCESS;
 
 }
