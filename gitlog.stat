@@ -1,0 +1,283 @@
+commit 4eaf7229d44f3d8a9a1ff0e3a0cde9ca64160f90
+Author: cedantoine <cedric.antoine@student.uclouvain.be>
+Date:   Fri May 10 03:36:03 2019 +0200
+
+    0 byte perdu
+
+ Makefile      |   8 ++++----
+ Test/Makefile |   4 ++--
+ Test/test.c   |  27 ++++++++++++++++++++++++++-
+ constantes.h  |   1 +
+ cracker       | Bin 53384 -> 53400 bytes
+ main.c        |  43 +++++++++++++++++++++++++++----------------
+ 6 files changed, 60 insertions(+), 23 deletions(-)
+
+commit 8dd6ed6c13a42fbea0223c34d20e3fbef0c04f59
+Merge: f210ac1 d23f89b
+Author: cedantoine <cedric.antoine@student.uclouvain.be>
+Date:   Thu May 9 23:59:42 2019 +0200
+
+    Merge branch 'master' of https://github.com/cedantoine/LSINF1252-Password-Cracker
+
+commit f210ac1165d90d99a699283042e5b782c7e72c55
+Author: cedantoine <cedric.antoine@student.uclouvain.be>
+Date:   Thu May 9 23:59:26 2019 +0200
+
+    .bin
+
+ cracker            | Bin 53384 -> 53384 bytes
+ main.c             |   2 +-
+ test-input/100.bin | Bin 0 -> 3200 bytes
+ test-input/500.bin | Bin 0 -> 16000 bytes
+ 4 files changed, 1 insertion(+), 1 deletion(-)
+
+commit d23f89b85c82ccc3da828d1193d60a593ef7060a
+Merge: 2e53244 763bbe4
+Author: zschoofs <zoe.schoofs@student.uclouvain.be>
+Date:   Thu May 9 23:57:27 2019 +0200
+
+    Merge branch 'master' of https://github.com/cedantoine/LSINF1252-Password-Cracker
+
+commit 2e53244104ad8bfbdc1597bb98e7d07405de81ce
+Author: zschoofs <zoe.schoofs@student.uclouvain.be>
+Date:   Thu May 9 23:57:16 2019 +0200
+
+    Update cracker
+
+ cracker | Bin 53208 -> 53280 bytes
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit 763bbe404cee834e9764013dbe2f2d14cc3cd938
+Author: cedantoine <cedric.antoine@student.uclouvain.be>
+Date:   Thu May 9 17:55:22 2019 +0200
+
+    destroy
+
+ cracker | Bin 53208 -> 53384 bytes
+ main.c  |  37 ++++++++++++++++++++++---------------
+ 2 files changed, 22 insertions(+), 15 deletions(-)
+
+commit b1325f4d29f060c588de7a73c02a96ba68ef083b
+Merge: 639975c 1339dc9
+Author: zschoofs <zoe.schoofs@student.uclouvain.be>
+Date:   Thu May 9 15:51:47 2019 +0200
+
+    Merge branch 'master' of https://github.com/cedantoine/LSINF1252-Password-Cracker
+
+commit 639975c3a4c61b1c7d3136a07883f58569472bd5
+Author: zschoofs <zoe.schoofs@student.uclouvain.be>
+Date:   Thu May 9 15:50:54 2019 +0200
+
+    correction candidat
+
+ Makefile              |   7 ++++---
+ Test/Makefile         |   8 ++++----
+ Test/test.c           |   6 +++---
+ cracker               | Bin 53184 -> 53208 bytes
+ main.c                |  34 +++++++++++++++++++---------------
+ test-input/sortie.txt | Bin 0 -> 756 bytes
+ 6 files changed, 30 insertions(+), 25 deletions(-)
+
+commit 1339dc9f6178933df5105c3d8ac6cc9f027587d7
+Author: cedantoine <cedric.antoine@student.uclouvain.be>
+Date:   Thu May 9 15:34:09 2019 +0200
+
+    pour les leak
+
+ cracker | Bin 53184 -> 53264 bytes
+ main.c  |  18 +++++++++++-------
+ 2 files changed, 11 insertions(+), 7 deletions(-)
+
+commit 73b1e7d08c7299dec60829126736c529ac2124ed
+Author: zschoofs <zoe.schoofs@student.uclouvain.be>
+Date:   Thu May 9 15:07:38 2019 +0200
+
+    vider sortie
+
+ test-input/sortie.txt | Bin 738 -> 0 bytes
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit 967f23bf1947818df8e6c585d03687516081c0c6
+Author: zschoofs <zoe.schoofs@student.uclouvain.be>
+Date:   Thu May 9 15:07:18 2019 +0200
+
+    sortie
+
+ cracker               | Bin 53192 -> 53184 bytes
+ main.c                |   9 ++++-----
+ test-input/sortie.txt | Bin 101 -> 738 bytes
+ 3 files changed, 4 insertions(+), 5 deletions(-)
+
+commit 6c6b42a97ad9bfb8eb9c01a13e42441ca5a562bd
+Author: zschoofs <zoe.schoofs@student.uclouvain.be>
+Date:   Thu May 9 15:01:08 2019 +0200
+
+    fini avec print
+
+ cracker               | Bin 39984 -> 53192 bytes
+ main.c                |  41 +++++++++++++++++++++++------------------
+ test-input/sortie.txt | Bin 0 -> 101 bytes
+ 3 files changed, 23 insertions(+), 18 deletions(-)
+
+commit 988ad9e6a2ce569f25029cf41040d77b3865d562
+Author: zschoofs <zoe.schoofs@student.uclouvain.be>
+Date:   Thu May 9 14:17:35 2019 +0200
+
+    print
+
+ main.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+commit 48c12d1dadbc5e6dbc06e765126db4b433d43fb7
+Merge: a3fc093 9685354
+Author: zschoofs <zoe.schoofs@student.uclouvain.be>
+Date:   Thu May 9 14:16:56 2019 +0200
+
+    Merge branch 'master' of https://github.com/cedantoine/LSINF1252-Password-Cracker
+
+commit a3fc09379be7813b31b60e38944522ae94c04d99
+Author: zschoofs <zoe.schoofs@student.uclouvain.be>
+Date:   Thu May 9 14:16:35 2019 +0200
+
+    write fichier
+
+ Makefile      |   6 +++++-
+ Test/Makefile |   7 +++++++
+ Test/test.c   |  60 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ cracker       | Bin 39984 -> 39984 bytes
+ main.c        |   1 -
+ 5 files changed, 72 insertions(+), 2 deletions(-)
+
+commit 9685354294da353a2d8d79de0dbeff0125fd08af
+Author: cedantoine <cedric.antoine@student.uclouvain.be>
+Date:   Thu May 9 13:26:41 2019 +0200
+
+    nombre de threads
+
+ cracker | Bin 53008 -> 53016 bytes
+ main.c  |  13 +++++++++----
+ 2 files changed, 9 insertions(+), 4 deletions(-)
+
+commit 6c234f073e4b55af2813630b09fb8e75dd547008
+Author: cedantoine <cedric.antoine@student.uclouvain.be>
+Date:   Thu May 9 03:08:05 2019 +0200
+
+    tout marche
+
+ cracker | Bin 46936 -> 53008 bytes
+ main.c  |   5 +----
+ 2 files changed, 1 insertion(+), 4 deletions(-)
+
+commit e5dc3a7e3e1226fb885b4b3d7358a4178f0174f7
+Author: Cedric Antoine <cedantoine@hoth.info.ucl.ac.be>
+Date:   Thu May 9 02:24:53 2019 +0200
+
+    lefeuu
+
+ Makefile |   8 ++++----
+ cracker  | Bin 40040 -> 46936 bytes
+ main.c   |  35 +++++++++++++++++++++++++++++++----
+ 3 files changed, 35 insertions(+), 8 deletions(-)
+
+commit 852dcfca578e422ddc8633288c3fe4e2b60cfaf6
+Author: cedantoine <cedric.antoine@student.uclouvain.be>
+Date:   Thu May 9 01:35:44 2019 +0200
+
+    le feu
+
+ cracker          | Bin 39984 -> 40040 bytes
+ main.c           | 126 ++++++++++++++++++++++++++++++++++++-------------------
+ test-input/1.bin | Bin 0 -> 32 bytes
+ test-input/6.bin | Bin 0 -> 192 bytes
+ 4 files changed, 83 insertions(+), 43 deletions(-)
+
+commit 7c60611951a165d42130429f8fc412a3cc15b9ed
+Author: cedantoine <cedric.antoine@student.uclouvain.be>
+Date:   Wed May 8 20:02:41 2019 +0200
+
+    ichhhh
+
+ cracker | Bin 39984 -> 39984 bytes
+ main.c  |  46 +++++++++++++++++++++++++++-------------------
+ 2 files changed, 27 insertions(+), 19 deletions(-)
+
+commit 3439ec3c6f0c8c0d8ce2d804e7cafd3e4cd007b7
+Author: cedantoine <cedric.antoine@student.uclouvain.be>
+Date:   Wed May 8 18:36:02 2019 +0200
+
+    inverseur
+
+ cracker          | Bin 35696 -> 39984 bytes
+ main.c           |  47 ++++++++++++++++++++++++++++++++++++-----------
+ test-input/5.bin | Bin 0 -> 160 bytes
+ 3 files changed, 36 insertions(+), 11 deletions(-)
+
+commit 7b41b8586eed99e4b2a46ca8a6a15d72e2e97e44
+Author: cedantoine <cedric.antoine@student.uclouvain.be>
+Date:   Wed May 8 02:32:57 2019 +0200
+
+    commentaires
+
+ cracker | Bin 35696 -> 35696 bytes
+ main.c  |   4 ++--
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit c7c0ba18b63f4c327cef9f4cede86663d5563f85
+Author: cedantoine <cedric.antoine@student.uclouvain.be>
+Date:   Wed May 8 02:29:02 2019 +0200
+
+    introduction trieur
+
+ cracker | Bin 35464 -> 35696 bytes
+ main.c  | 177 +++++++++++++++++++++++++++++++++++++++++++++++++++++-----------
+ 2 files changed, 147 insertions(+), 30 deletions(-)
+
+commit bd882757046ec73c0889bc8507c44cc5f369822b
+Author: cedantoine <cedric.antoine@student.uclouvain.be>
+Date:   Wed May 8 01:24:35 2019 +0200
+
+    introduction inverseur
+
+ Makefile           |  16 +-
+ Template/reverse.c |  50 +++++
+ Template/reverse.h |  18 ++
+ Template/sha256.c  | 563 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ Template/sha256.h  |  91 +++++++++
+ cracker            | Bin 13888 -> 35464 bytes
+ main.c             | 119 +++++++++--
+ 7 files changed, 835 insertions(+), 22 deletions(-)
+
+commit 9f88c8f36d7ff14685118b7e7a1661996df0f817
+Author: cedantoine <cedric.antoine@student.uclouvain.be>
+Date:   Wed May 8 00:09:25 2019 +0200
+
+    mise en page
+
+ main.c | 138 ++++++++++++++++++++++++++---------------------------------------
+ 1 file changed, 54 insertions(+), 84 deletions(-)
+
+commit 18ef9f5a0bd42ff9a4d7f2914c47d7327048d714
+Author: cedantoine <49915505+cedantoine@users.noreply.github.com>
+Date:   Tue May 7 23:54:20 2019 +0200
+
+    Add files via upload
+
+ Makefile                |   17 +
+ README.md               |    2 +-
+ constantes.h            |    5 +
+ cracker                 |  Bin 0 -> 13888 bytes
+ main.c                  |  231 +++++++++++
+ test-input/01_4c_1k.bin |  Bin 0 -> 32000 bytes
+ test-input/01_4c_1k.txt | 1000 +++++++++++++++++++++++++++++++++++++++++++++++
+ test-input/02_6c_5.bin  |    5 +
+ test-input/02_6c_5.txt  |    5 +
+ 9 files changed, 1264 insertions(+), 1 deletion(-)
+
+commit 2605ab866c37ab3ad7c30703527abc0149623b49
+Author: cedantoine <49915505+cedantoine@users.noreply.github.com>
+Date:   Tue May 7 23:53:25 2019 +0200
+
+    Initial commit
+
+ README.md | 2 ++
+ 1 file changed, 2 insertions(+)

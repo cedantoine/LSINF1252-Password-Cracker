@@ -1,22 +1,23 @@
-all: cracker
-	make clean
-	make tests
+cracker: src/main.o reverse.o sha256.o
+	gcc -Wall -g -Werror -pthread -std=c99 -o cracker src/main.o sha256.o reverse.o
 
-cracker: main.o reverse.o sha256.o
-	gcc -Wall -g -Werror -pthread -std=c99 -o cracker main.o sha256.o reverse.o
+tests: tests.o
+	gcc -Wall -Werror -o tests tests.o -lpthread -lcunit
 
-main.o: main.c Template/reverse.h
-	gcc -Wall -g -Werror -pthread -std=c99 -c main.c
+main.o: src/main.c src/Template/reverse.h
+	gcc -Wall -g -Werror -pthread -std=c99 -c src/main.c
 
-reverse.o: Template/reverse.c Template/reverse.h
-	gcc -Wall -g -Werror -pthread -std=c99 -c Template/reverse.c
+reverse.o: src/Template/reverse.c src/Template/reverse.h
+	gcc -Wall -g -Werror -pthread -std=c99 -c src/Template/reverse.c
 
-sha256.o: Template/sha256.c Template/sha256.h
-	gcc -Wall -g -Werror -pthread -std=c99 -c Template/sha256.c
+sha256.o: src/Template/sha256.c src/Template/sha256.h
+	gcc -Wall -g -Werror -pthread -std=c99 -c src/Template/sha256.c
 
-tests:
-	cd Test && make
-	make clean
+tests.o: ./tests/tests.c
+	gcc -Wall -Werror -c tests.c -lcunit
 
 clean:
-	rm -rf *.o Template/*.o Test/*.o Fonctions/*.o
+	rm -rf *.o cracker src/Template/*.o tests/*.o src/main.o
+
+all: cracker
+	make tests

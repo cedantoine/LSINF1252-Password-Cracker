@@ -8,11 +8,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include "../constantes.h"
-#include "../Template/reverse.h"
-#include "../Template/sha256.h"
+#include "../src/constantes.h"
+#include "../src/Template/reverse.h"
+#include "../src/Template/sha256.h"
 #include "CUnit/Basic.h"
-#include <CUnit/CUnit.h>
 
 
 int type;
@@ -38,6 +37,7 @@ int compteur(char *password){
   return(nombretemp);
 }
 
+//------------------------------------------------------------------------------
 
 void compteurvoy(void) { //test servant a verifier qu'il compte bien le nombre de voyelle
   char *voy="coucou";
